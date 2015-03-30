@@ -162,6 +162,18 @@ Filters will be applied in the order they are specified.
 
 
 
+## Caching
+
+ims provides a simple on-disk cache, ensuring that unnecessary encoding work
+isn't repeated. When the first request comes in for a given transformation, the
+resulting image is written to cache and served from there if a subsequent
+request comes in.
+
+ims' caching implementation is very naive at present and has no concept of
+expiration times or detection when the source image changes. It will be
+expanded to include these features in future.
+
+
 ## TODO
 
 - Docs
