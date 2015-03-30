@@ -1,28 +1,27 @@
 package main
 
 import (
-	"net/http"
 	"runtime"
 
-	"github.com/codegangsta/negroni"
 	"github.com/docopt/docopt-go"
-	"github.com/meatballhat/negroni-logrus"
 
-	"github.com/paddycarey/ims/middleware"
+	"github.com/paddycarey/ims/server"
+	"github.com/paddycarey/ims/storage"
 )
 
 var usage string = `ims.
 
 Usage:
-  ims [--source=<src>] [--cache=<cache>]
+  ims [--source=<src>] [--cache=<cch>] [--address=<address>]
   ims -h | --help
   ims --version
 
 Options:
-  -h --help        Show this screen.
-  --version        Show version.
-  --source=<src>   Source directory  [default: ./].
-  --cache=<cache>  Cache directory   [default: ./.cache/].`
+  -h --help            Show this screen.
+  --version            Show version.
+  --source=<src>       Source directory                 [default: ./].
+  --cache=<cch>        Cache directory                  [default: ./.cache].
+  --address=<address>  Address that ims should bind to  [default: :5995].`
 
 func main() {
 
@@ -32,18 +31,13 @@ func main() {
 	// parse command line args, exiting if required
 	arguments, _ := docopt.Parse(usage, nil, true, "ims 0.1", false)
 
-	// set up filesystems for source and cache directories
-	cacheDir := arguments["--cache"].(string)
-	cacheFS := http.Dir(cacheDir)
-	srcFS := http.Dir(arguments["--source"].(string))
+	// load storage backend
+	src, err := storage.LoadBackend(arguments["--source"].(string))
+	if err != nil {
+		panic(err)
+	}
 
-	n := negroni.New(
-		negronilogrus.NewMiddleware(),
-		negroni.NewRecovery(),
-		middleware.NewCache(cacheFS),
-		middleware.NewProcessor(srcFS, cacheDir),
-		middleware.NewNotFound(),
-	)
-	n.Run(":5995")
-
+	// run application server
+	srv := server.NewServer(src, arguments["--cache"].(string))
+	srv.Run(arguments["--address"].(string))
 }
