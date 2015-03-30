@@ -62,6 +62,94 @@ Where the first 2 parameters are the top left corner of the box to use for
 cropping, the second 2 values are the bottom corner of the box.
 
 
+### Rotation
+
+You can rotate an image by 90, 180 or 270 degrees anti-clockwise using a URL in
+the following format:
+
+```
+http://localhost:5995/apple.png?rotate=270
+```
+
+The only acceptable parameters for `rotate` are `90`, `180` and `270`.
+
+
+### Flipping
+
+You can flip an image (horizontally or vertically) like so:
+
+```
+http://localhost:5995/apple.png?fliphorizontal
+http://localhost:5995/apple.png?flipvertical
+```
+
+Any parameters passed to either `fliphorizontal` or `flipvertical` are ignored.
+
+
+### Transpose/Transverse
+
+You can transpose an image (flip horizontally and rotate 90 degrees
+counter-clockwise) and get its transverse (flipped vertically and rotated 90
+degrees counter-clockwise) like so:
+
+```
+http://localhost:5995/apple.png?transpose
+http://localhost:5995/apple.png?transverse
+```
+
+Any parameters passed to either `transpose` or `transverse` are ignored.
+
+
+### Adjust contrast
+
+The contrast of an image can be manipulated like so:
+
+```
+http://localhost:5995/apple.png?contrast=50
+```
+
+The percentage parameter must be in range (-100, 100). The percentage = 0 gives
+the original image. The percentage = -100 gives solid grey image. The
+percentage = 100 gives an overcontrasted image.
+
+
+### Adjust brightness
+
+The brightness of an image can be manipulated like so:
+
+```
+http://localhost:5995/apple.png?brightness=50
+```
+
+The percentage parameter must be in range (-100, 100). The percentage = 0 gives
+the original image. The percentage = -100 gives solid black image. The
+percentage = 100 gives solid white image.
+
+
+### Adjust saturation
+
+The saturation of an image can be manipulated like so:
+
+```
+http://localhost:5995/apple.png?saturation=50
+```
+
+The percentage parameter must be in range (-100, 500). The percentage = 0 gives
+the original image.
+
+
+### Adjust hue
+
+The hue of an image can be manipulated like so:
+
+```
+http://localhost:5995/apple.png?hue=150
+```
+
+The shift parameter is the hue angle shift, typically in range (-180, 180). The
+shift = 0 gives the original image.
+
+
 ### Chaining filters
 
 Filters can be chained arbitrarily in the URL like so:

@@ -1,7 +1,6 @@
 package filters
 
 import (
-	"fmt"
 	"net/url"
 	"strings"
 
@@ -62,18 +61,6 @@ func (qs *QueryString) Values() ([]*FilterArgs, error) {
 		values = append(values, NewFilterArgs(key, value))
 	}
 	return values, err
-}
-
-func GetFilter(name string) (Filter, error) {
-
-	switch name {
-	case "crop":
-		return Crop, nil
-	case "resize":
-		return Resize, nil
-	}
-
-	return nil, fmt.Errorf("Matching filter not found: %s", name)
 }
 
 // ProcessImage loads a file from storage, decodes it as an image, parses the
