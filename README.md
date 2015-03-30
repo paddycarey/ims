@@ -177,7 +177,6 @@ expanded to include these features in future.
 ## TODO
 
 - Docs
-- Images are always written to jpeg format at present, this needs to be format specific.
 - Expose more manipulations/filters
 - Unit/integration tests
 - Release testing builds
