@@ -73,7 +73,7 @@ func (f *FilterMiddleware) ServeHTTP(rw http.ResponseWriter, r *http.Request, ne
 
 	if r.URL.RawQuery != "" {
 
-		img, format, err := storage.DecodeImage(file)
+		img, _, err := storage.DecodeImage(file)
 		if err != nil {
 			logrus.WithFields(logrus.Fields{
 				"err": err,
@@ -92,20 +92,18 @@ func (f *FilterMiddleware) ServeHTTP(rw http.ResponseWriter, r *http.Request, ne
 			rw.Write([]byte("400 Bad Request"))
 			return
 		}
-		img = filters.ApplyFilters(g, img)
-		modTime = time.Now()
-
-		encoder, err := filters.GetEncoder(format)
+		err = img.ApplyFilters(g)
 		if err != nil {
 			logrus.WithFields(logrus.Fields{
 				"err": err,
-			}).Error("Unable to choose encoder")
+			}).Error("Unable to apply filters")
 			rw.WriteHeader(http.StatusInternalServerError)
 			rw.Write([]byte("500 Internal Server Error"))
 			return
 		}
+		modTime = time.Now()
 
-		serveFile, err = encoder(img)
+		serveFile, err = img.Encode()
 		if err != nil {
 			logrus.WithFields(logrus.Fields{
 				"err": err,
