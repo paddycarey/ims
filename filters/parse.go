@@ -66,23 +66,27 @@ func (qs *QueryString) Values() ([]*FilterArgs, error) {
 // ProcessImage loads a file from storage, decodes it as an image, parses the
 // query string, processes/filters the image and returns the result wrapped in
 // a bytes.NewReader instance.
-func ParseFilters(q string) (*gift.GIFT, error) {
+func ParseFilters(q string) (*gift.GIFT, bool, error) {
 
 	// apply processors to image
 	qs := QueryString(q)
 	filterArgs, err := qs.Values()
 	if err != nil {
-		return nil, err
+		return nil, false, err
 	}
 
 	g := gift.New()
+	pxlBlnd := false
 	for _, filterArg := range filterArgs {
 		filter, err := GetFilter(filterArg.Filter)
 		if err != nil {
-			return nil, err
+			return nil, false, err
 		}
-		filter(g, filterArg.Args)
+		fPxlBlnd := filter(g, filterArg.Args)
+		if fPxlBlnd {
+			pxlBlnd = true
+		}
 	}
 
-	return g, nil
+	return g, pxlBlnd, nil
 }

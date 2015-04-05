@@ -83,7 +83,7 @@ func (f *FilterMiddleware) ServeHTTP(rw http.ResponseWriter, r *http.Request, ne
 			return
 		}
 
-		g, err := filters.ParseFilters(r.URL.RawQuery)
+		g, pxlBlnd, err := filters.ParseFilters(r.URL.RawQuery)
 		if err != nil {
 			logrus.WithFields(logrus.Fields{
 				"err": err,
@@ -92,7 +92,7 @@ func (f *FilterMiddleware) ServeHTTP(rw http.ResponseWriter, r *http.Request, ne
 			rw.Write([]byte("400 Bad Request"))
 			return
 		}
-		err = img.ApplyFilters(g)
+		err = img.ApplyFilters(g, pxlBlnd)
 		if err != nil {
 			logrus.WithFields(logrus.Fields{
 				"err": err,

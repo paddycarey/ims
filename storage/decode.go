@@ -15,7 +15,7 @@ import (
 )
 
 type ImsImage interface {
-	ApplyFilters(*gift.GIFT) error
+	ApplyFilters(*gift.GIFT, bool) error
 	Encode() (io.ReadSeeker, error)
 }
 
@@ -23,12 +23,28 @@ type GIF struct {
 	G *gif.GIF
 }
 
-func (j *GIF) ApplyFilters(g *gift.GIFT) error {
+func (j *GIF) ApplyFilters(g *gift.GIFT, pb bool) error {
 	newImages := []*image.Paletted{}
-	for _, i := range j.G.Image {
-		dst := image.NewPaletted(g.Bounds(i.Bounds()), i.Palette)
-		g.Draw(dst, i)
-		newImages = append(newImages, dst)
+	firstFrame := j.G.Image[0]
+
+	if !pb {
+		for i := range j.G.Image {
+			// tmp image is used here to keep the same dimensions for each frame
+			tmp := image.NewNRGBA(firstFrame.Bounds())
+			gift.New().DrawAt(tmp, j.G.Image[i], j.G.Image[i].Bounds().Min, gift.CopyOperator)
+			dst := image.NewPaletted(g.Bounds(tmp.Bounds()), j.G.Image[i].Palette)
+			g.Draw(dst, tmp)
+			newImages = append(newImages, dst)
+		}
+	} else {
+		tmp := image.NewNRGBA(firstFrame.Bounds())
+		for i := range j.G.Image {
+			// draw current frame over previous:
+			gift.New().DrawAt(tmp, j.G.Image[i], j.G.Image[i].Bounds().Min, gift.OverOperator)
+			dst := image.NewPaletted(g.Bounds(tmp.Bounds()), j.G.Image[i].Palette)
+			g.Draw(dst, tmp)
+			newImages = append(newImages, dst)
+		}
 	}
 
 	j.G.Image = newImages
@@ -49,7 +65,7 @@ type JPEG struct {
 	I image.Image
 }
 
-func (j *JPEG) ApplyFilters(g *gift.GIFT) error {
+func (j *JPEG) ApplyFilters(g *gift.GIFT, pb bool) error {
 	dst := image.NewRGBA(g.Bounds(j.I.Bounds()))
 	g.Draw(dst, j.I)
 
@@ -71,7 +87,7 @@ type PNG struct {
 	I image.Image
 }
 
-func (j *PNG) ApplyFilters(g *gift.GIFT) error {
+func (j *PNG) ApplyFilters(g *gift.GIFT, pb bool) error {
 	dst := image.NewRGBA(g.Bounds(j.I.Bounds()))
 	g.Draw(dst, j.I)
 
