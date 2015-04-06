@@ -11,7 +11,7 @@ import (
 	"github.com/Sirupsen/logrus"
 
 	"github.com/paddycarey/ims/filters"
-	"github.com/paddycarey/ims/storage"
+	"github.com/paddycarey/ims/images"
 )
 
 // FilterMiddleware is a middleware handler that performs image manipulation on
@@ -73,7 +73,7 @@ func (f *FilterMiddleware) ServeHTTP(rw http.ResponseWriter, r *http.Request, ne
 
 	if r.URL.RawQuery != "" {
 
-		img, _, err := storage.DecodeImage(file)
+		img, _, err := images.DecodeImage(file)
 		if err != nil {
 			logrus.WithFields(logrus.Fields{
 				"err": err,
