@@ -2,6 +2,7 @@ package storage
 
 import (
 	"bytes"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -79,7 +80,9 @@ func (g *GCSFileSystem) Open(name string) (File, error) {
 	}
 
 	logrus.WithField("file", name).Info("Fetching file from GCS")
-	resp, err := g.client.Get(res.MediaLink)
+
+	u := fmt.Sprintf("https://storage.googleapis.com/%s/%s", g.bucket, name)
+	resp, err := g.client.Get(u)
 	if err != nil {
 		return nil, err
 	}
