@@ -1,36 +1,49 @@
 package storage
 
 import (
-	"fmt"
-	"net/http"
-	"os"
+	"errors"
+	"io"
+	"path/filepath"
 	"strings"
+	"time"
 )
 
-func LoadBackend(uri string) (http.Dir, error) {
-	missingLoaders := []string{"s3", "gcs"}
-	for _, loader := range missingLoaders {
-		if strings.HasPrefix(uri, loader) {
-			err := fmt.Errorf("%s loader not implemented yet", loader)
-			return http.Dir(""), err
-		}
+type File interface {
+	io.Closer
+	io.ReadSeeker
+	MimeType() string
+	ModTime() time.Time
+}
+
+type FileSystem interface {
+	Open(string) (File, error)
+}
+
+func LoadBackend(uri, credentials string) (FileSystem, error) {
+
+	if strings.HasPrefix(uri, "s3://") {
+		err := errors.New("s3 loader not implemented yet")
+		return nil, err
+	}
+
+	if strings.HasPrefix(uri, "gcs://") {
+		return NewGCSFileSystem(uri, credentials)
 	}
 
 	// fall through to default filesystem loader
-	return NewFileSystemStorage(uri)
+	return NewLocalFileSystem(uri)
 }
 
-func NewFileSystemStorage(dir string) (http.Dir, error) {
-
-	src, err := os.Stat(dir)
-	if err != nil {
-		return http.Dir(""), err
+func getMimeTypeFromFilename(name string) string {
+	ext := filepath.Ext(name)
+	switch ext {
+	case ".gif":
+		return "image/gif"
+	case ".jpeg", ".jpg":
+		return "image/jpeg"
+	case ".png":
+		return "image/png"
 	}
 
-	if !src.IsDir() {
-		fmt.Errorf("%s is not a directory", dir)
-		return http.Dir(""), err
-	}
-
-	return http.Dir(dir), nil
+	return ""
 }

@@ -12,16 +12,17 @@ import (
 var usage string = `ims.
 
 Usage:
-  ims [--source=<src>] [--cache=<cch>] [--address=<address>]
+  ims [--source=<src>] [--cache=<cch>] [--credentials=<creds>] [--address=<address>]
   ims -h | --help
   ims --version
 
 Options:
-  -h --help            Show this screen.
-  --version            Show version.
-  --source=<src>       Source directory                 [default: ./].
-  --cache=<cch>        Cache directory                  [default: ./.cache].
-  --address=<address>  Address that ims should bind to  [default: :5995].`
+  -h --help              Show this screen.
+  --version              Show version.
+  --source=<src>         Source directory                 [default: ./].
+  --cache=<cch>          Cache directory                  [default: ./.cache].
+  --credentials=<creds>  Credentials JSON file            [default: credentials.json].
+  --address=<address>    Address that ims should bind to  [default: :5995].`
 
 func main() {
 
@@ -32,7 +33,7 @@ func main() {
 	arguments, _ := docopt.Parse(usage, nil, true, "ims 0.1", false)
 
 	// load storage backend
-	src, err := storage.LoadBackend(arguments["--source"].(string))
+	src, err := storage.LoadBackend(arguments["--source"].(string), arguments["--credentials"].(string))
 	if err != nil {
 		panic(err)
 	}

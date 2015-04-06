@@ -1,13 +1,13 @@
 package server
 
 import (
-	"net/http"
-
 	"github.com/codegangsta/negroni"
 	"github.com/meatballhat/negroni-logrus"
+
+	"github.com/paddycarey/ims/storage"
 )
 
-func NewServer(source http.FileSystem, cacheDir string) *negroni.Negroni {
+func NewServer(source storage.FileSystem, cacheDir string) *negroni.Negroni {
 
 	return negroni.New(
 		negronilogrus.NewMiddleware(),

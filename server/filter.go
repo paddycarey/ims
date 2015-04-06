@@ -12,20 +12,21 @@ import (
 
 	"github.com/paddycarey/ims/filters"
 	"github.com/paddycarey/ims/images"
+	"github.com/paddycarey/ims/storage"
 )
 
 // FilterMiddleware is a middleware handler that performs image manipulation on
 // the fly, caching the results in-memory.
 type FilterMiddleware struct {
-	// storageBackend can be anything that implements the `http.FileSystem`
+	// storageBackend can be anything that implements the `storage.FileSystem`
 	// interface. This allows easy use of either a local directory or a remote
 	// store like S3 or GCS.
-	storageBackend http.FileSystem
+	storageBackend storage.FileSystem
 	cacheDir       string
 }
 
 // NewFilterMiddleware returns a new instance of FilterMiddleware
-func NewFilterMiddleware(storageBackend http.FileSystem, cacheDir string) *FilterMiddleware {
+func NewFilterMiddleware(storageBackend storage.FileSystem, cacheDir string) *FilterMiddleware {
 	return &FilterMiddleware{
 		storageBackend: storageBackend,
 		cacheDir:       cacheDir,
@@ -60,16 +61,7 @@ func (f *FilterMiddleware) ServeHTTP(rw http.ResponseWriter, r *http.Request, ne
 	defer file.Close()
 	serveFile = file
 
-	stat, err := file.Stat()
-	if err != nil {
-		logrus.WithFields(logrus.Fields{
-			"err": err,
-		}).Error("Unable to stat file")
-		rw.WriteHeader(http.StatusInternalServerError)
-		rw.Write([]byte("500 Internal Server Error"))
-		return
-	}
-	modTime := stat.ModTime()
+	modTime := file.ModTime()
 
 	if r.URL.RawQuery != "" {
 
