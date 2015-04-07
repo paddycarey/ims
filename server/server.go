@@ -2,7 +2,7 @@ package server
 
 import (
 	"github.com/codegangsta/negroni"
-	"github.com/meatballhat/negroni-logrus"
+	"github.com/pilu/xrequestid"
 
 	"github.com/paddycarey/ims/storage"
 )
@@ -10,7 +10,8 @@ import (
 func NewServer(source storage.FileSystem, cacheDir string) *negroni.Negroni {
 
 	return negroni.New(
-		negronilogrus.NewMiddleware(),
+		xrequestid.New(16),
+		NewLoggerMiddleware(),
 		negroni.NewRecovery(),
 		NewCacheMiddleware(cacheDir),
 		NewFilterMiddleware(source, cacheDir),

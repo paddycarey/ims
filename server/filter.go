@@ -41,7 +41,8 @@ func (f *FilterMiddleware) ServeHTTP(rw http.ResponseWriter, r *http.Request, ne
 	format, err := validateImageExtension(r.URL.Path)
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
-			"err": err,
+			"err":       err,
+			"requestID": r.Header.Get("X-Request-Id"),
 		}).Error("Invalid image extension")
 		rw.WriteHeader(http.StatusBadRequest)
 		rw.Write([]byte("400 Bad Request"))
@@ -52,7 +53,8 @@ func (f *FilterMiddleware) ServeHTTP(rw http.ResponseWriter, r *http.Request, ne
 	file, err := f.storageBackend.Open(r.URL.Path)
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
-			"err": err,
+			"err":       err,
+			"requestID": r.Header.Get("X-Request-Id"),
 		}).Error("Unable to open file")
 		rw.WriteHeader(http.StatusNotFound)
 		rw.Write([]byte("404 Not Found"))
@@ -68,7 +70,8 @@ func (f *FilterMiddleware) ServeHTTP(rw http.ResponseWriter, r *http.Request, ne
 		img, _, err := images.DecodeImage(file)
 		if err != nil {
 			logrus.WithFields(logrus.Fields{
-				"err": err,
+				"err":       err,
+				"requestID": r.Header.Get("X-Request-Id"),
 			}).Error("Unable to parse file as image")
 			rw.WriteHeader(http.StatusInternalServerError)
 			rw.Write([]byte("500 Internal Server Error"))
@@ -78,7 +81,8 @@ func (f *FilterMiddleware) ServeHTTP(rw http.ResponseWriter, r *http.Request, ne
 		g, pxlBlnd, err := filters.ParseFilters(r.URL.RawQuery)
 		if err != nil {
 			logrus.WithFields(logrus.Fields{
-				"err": err,
+				"err":       err,
+				"requestID": r.Header.Get("X-Request-Id"),
 			}).Error("Unable to parse filters")
 			rw.WriteHeader(http.StatusBadRequest)
 			rw.Write([]byte("400 Bad Request"))
@@ -87,7 +91,8 @@ func (f *FilterMiddleware) ServeHTTP(rw http.ResponseWriter, r *http.Request, ne
 		err = img.ApplyFilters(g, pxlBlnd)
 		if err != nil {
 			logrus.WithFields(logrus.Fields{
-				"err": err,
+				"err":       err,
+				"requestID": r.Header.Get("X-Request-Id"),
 			}).Error("Unable to apply filters")
 			rw.WriteHeader(http.StatusInternalServerError)
 			rw.Write([]byte("500 Internal Server Error"))
@@ -98,7 +103,8 @@ func (f *FilterMiddleware) ServeHTTP(rw http.ResponseWriter, r *http.Request, ne
 		serveFile, err = img.Encode()
 		if err != nil {
 			logrus.WithFields(logrus.Fields{
-				"err": err,
+				"err":       err,
+				"requestID": r.Header.Get("X-Request-Id"),
 			}).Error("Unable to encode image")
 			rw.WriteHeader(http.StatusInternalServerError)
 			rw.Write([]byte("500 Internal Server Error"))
@@ -110,7 +116,8 @@ func (f *FilterMiddleware) ServeHTTP(rw http.ResponseWriter, r *http.Request, ne
 	// store the image in the cache directory
 	if err := cacheImage(serveFile, f.cacheDir, hashURL(r.URL)); err != nil {
 		logrus.WithFields(logrus.Fields{
-			"err": err,
+			"err":       err,
+			"requestID": r.Header.Get("X-Request-Id"),
 		}).Error("Unable to cache image")
 		rw.WriteHeader(http.StatusInternalServerError)
 		rw.Write([]byte("500 Internal Server Error"))

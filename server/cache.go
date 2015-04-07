@@ -37,7 +37,8 @@ func (c *CacheMiddleware) ServeHTTP(rw http.ResponseWriter, r *http.Request, nex
 	f, err := c.Dir.Open(cFile)
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
-			"url": r.URL.String(),
+			"url":       r.URL.String(),
+			"requestID": r.Header.Get("X-Request-Id"),
 		}).Info("File not cached, passing to filters.")
 		next(rw, r)
 		return
@@ -50,7 +51,8 @@ func (c *CacheMiddleware) ServeHTTP(rw http.ResponseWriter, r *http.Request, nex
 	}
 
 	logrus.WithFields(logrus.Fields{
-		"url": r.URL.String(),
+		"url":       r.URL.String(),
+		"requestID": r.Header.Get("X-Request-Id"),
 	}).Info("Serving file from cache")
 	http.ServeContent(rw, r, r.URL.Path, fi.ModTime(), f)
 }
