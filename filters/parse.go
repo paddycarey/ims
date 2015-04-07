@@ -80,7 +80,7 @@ func ParseFilters(q string) (*gift.GIFT, bool, error) {
 	for _, filterArg := range filterArgs {
 		filter, err := GetFilter(filterArg.Filter)
 		if err != nil {
-			return nil, false, err
+			continue
 		}
 		fPxlBlnd := filter(g, filterArg.Args)
 		if fPxlBlnd {

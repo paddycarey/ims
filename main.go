@@ -3,8 +3,11 @@ package main
 import (
 	"runtime"
 
+	"github.com/codegangsta/negroni"
 	"github.com/docopt/docopt-go"
+	"github.com/meatballhat/negroni-logrus"
 
+	"github.com/paddycarey/ims/cache"
 	"github.com/paddycarey/ims/server"
 	"github.com/paddycarey/ims/storage"
 )
@@ -12,17 +15,17 @@ import (
 var usage string = `ims.
 
 Usage:
-  ims [--source=<src>] [--cache=<cch>] [--credentials=<creds>] [--address=<address>]
+  ims [--storage=<src>] [--storage-credentials=<creds>] [--cache=<cch>] [--address=<address>]
   ims -h | --help
   ims --version
 
 Options:
-  -h --help              Show this screen.
-  --version              Show version.
-  --source=<src>         Source directory                 [default: ./].
-  --cache=<cch>          Cache directory                  [default: ./.cache].
-  --credentials=<creds>  Credentials JSON file            [default: credentials.json].
-  --address=<address>    Address that ims should bind to  [default: :5995].`
+  -h --help                      Show this screen.
+  --version                      Show version.
+  --storage=<src>                Storage backend                  [default: ./].
+  --storage-credentials=<creds>  Storage credentials JSON file    [default: storage-credentials.json].
+  --cache=<cch>                  Cache backend                    [default: ./.cache].
+  --address=<address>            Address that ims should bind to  [default: :5995].`
 
 func main() {
 
@@ -32,13 +35,22 @@ func main() {
 	// parse command line args, exiting if required
 	arguments, _ := docopt.Parse(usage, nil, true, "ims 0.1", false)
 
+	// load cache backend
+	c, err := cache.LoadBackend(arguments["--cache"].(string))
+	if err != nil {
+		panic(err)
+	}
+
 	// load storage backend
-	src, err := storage.LoadBackend(arguments["--source"].(string), arguments["--credentials"].(string))
+	s, err := storage.LoadBackend(arguments["--storage"].(string), arguments["--storage-credentials"].(string))
 	if err != nil {
 		panic(err)
 	}
 
 	// run application server
-	srv := server.NewServer(src, arguments["--cache"].(string))
-	srv.Run(arguments["--address"].(string))
+	n := negroni.New()
+	n.Use(negronilogrus.NewMiddleware())
+	n.Use(negroni.NewRecovery())
+	n.UseHandler(&server.Server{Cache: c, Storage: s})
+	n.Run(arguments["--address"].(string))
 }

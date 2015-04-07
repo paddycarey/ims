@@ -15,24 +15,6 @@ import (
 	gcs "google.golang.org/api/storage/v1"
 )
 
-type GCSFile struct {
-	*bytes.Reader
-	name    string
-	modtime time.Time
-}
-
-func (gf *GCSFile) Close() error {
-	return nil
-}
-
-func (gf *GCSFile) MimeType() string {
-	return getMimeTypeFromFilename(gf.name)
-}
-
-func (gf *GCSFile) ModTime() time.Time {
-	return gf.modtime
-}
-
 type GCSFileSystem struct {
 	bucket  string
 	service *gcs.Service
@@ -98,7 +80,7 @@ func (g *GCSFileSystem) Open(name string) (File, error) {
 		return nil, err
 	}
 
-	gcsf := &GCSFile{bytes.NewReader(b), name, ts}
+	gcsf := &InMemoryFile{bytes.NewReader(b), getMimeTypeFromFilename(name), ts}
 	return gcsf, nil
 }
 
