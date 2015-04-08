@@ -14,6 +14,8 @@ import (
 type Server struct {
 	Cache   cache.CacheBackend
 	Storage storage.FileSystem
+	// disable optimizations
+	NoOpts bool
 }
 
 func (s *Server) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
@@ -37,7 +39,7 @@ func (s *Server) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	defer storedImage.Close()
 
 	// process the image that's been loaded from storage
-	processedImage, err = images.Process(storedImage, r.URL.RawQuery)
+	processedImage, err = images.Process(storedImage, r.URL, s.NoOpts)
 	if err != nil {
 		s.serveError(rw, r, err)
 		return
