@@ -16,18 +16,19 @@ import (
 var usage string = `ims.
 
 Usage:
-  ims [--storage=<src>] [--storage-credentials=<creds>] [--cache=<cch>] [--address=<address>] [--log-level=<level>] [--no-optimization]
+  ims [--storage=<src>] [--storage-credentials=<creds>] [--cache=<cch>]
+      [--address=<address>] [--log-level=<level>] [--no-optimization]
   ims -h | --help
   ims --version
 
 Options:
   -h --help                      Show this screen.
   --version                      Show version.
-  --storage=<src>                Storage backend                        [default: ./].
-  --storage-credentials=<creds>  Storage credentials JSON file          [default: storage-credentials.json].
-  --cache=<cch>                  Cache backend                          [default: ./.cache].
-  --address=<address>            Address that ims should bind to        [default: :5995].
-  --log-level=<level>            Logging level (debug/info/warn/error)  [default: info].
+  --storage=<src>                Storage backend                    [default: ./].
+  --storage-credentials=<creds>  Storage credentials file           [default: storage-credentials.json].
+  --cache=<cch>                  Cache backend                      [default: ./.cache].
+  --address=<address>            Address that ims should bind to    [default: :5995].
+  --log-level=<level>            Log level (debug/info/warn/error)  [default: info].
   --no-optimization              Disables image optimization.`
 
 // exitOnError checks that an error is not nil. If the passed value is an

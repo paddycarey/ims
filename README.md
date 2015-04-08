@@ -1,9 +1,9 @@
 ims
 ===
 
-ims is a standalone image manipulation and serving service written in Go. ims
-provides on-the-fly resizing, cropping, rotation etc. (See full docs for an
-explanation of all available filters).
+ims is a standalone image manipulation, optimisation and serving service
+written in Go. ims provides on-the-fly resizing, cropping, rotation etc. (See
+full docs for an explanation of all available filters).
 
 ims uses the excellent [gift](https://github.com/disintegration/gift) library
 under the hood to perform all image manipulation.
@@ -18,23 +18,51 @@ other offers of help are greatly appreciated.
 
 
 
+## Installing and running ims
+
+ims is distributed in a single os-specific binary for each target platform. To
+install ims just download the executable for your target platform and save
+somewhere on your `$PATH` (e.g. `/usr/local/bin/ims`).
+
+ims has no further dependencoes, you can run it straight away:
+
+```bash
+$ cd my_directory_full_of_images
+$ ims
+```
+
+Once running, all images within the folder should be available at
+http://localhost:5995 (e.g. http://localhost:5995/apple.png).
+
+If required, you can also pass a number of different options to ims on the
+command line:
+
+```bash
+$ ims --help
+ims.
+
+Usage:
+  ims [--storage=<src>] [--storage-credentials=<creds>] [--cache=<cch>]
+      [--address=<address>] [--log-level=<level>] [--no-optimization]
+  ims -h | --help
+  ims --version
+
+Options:
+  -h --help                      Show this screen.
+  --version                      Show version.
+  --storage=<src>                Storage backend                    [default: ./].
+  --storage-credentials=<creds>  Storage credentials file           [default: storage-credentials.json].
+  --cache=<cch>                  Cache backend                      [default: ./.cache].
+  --address=<address>            Address that ims should bind to    [default: :5995].
+  --log-level=<level>            Log level (debug/info/warn/error)  [default: info].
+  --no-optimization              Disables image optimization.
+```
+
+
+
 ## Usage
 
-Until a release build of ims is made, you'll need to build it if you want to use it:
-
-```
-$ go build
-```
-
-Once built, you just need to point the binary at an existing directory full of images.
-
-```
-$ ./ims --source ./myimages
-```
-
-And then all images within the folder should be available at
-http://localhost:5995. Assuming you have an image called `apple.png`, applying
-filters is simple.
+Assuming you have an image called `apple.png`, applying filters is simple.
 
 
 ### Resizing
@@ -162,6 +190,20 @@ Filters will be applied in the order they are specified.
 
 
 
+## Optimisation
+
+When available and configured to do so (on by default), ims will use one of a
+number of third-party tools to optimise the images being served. Optimisation
+is applied after the image has been processed by ims. Installation of the
+third-party tools is outside the scope of this README.
+
+ims uses the following tools when available:
+
+- GIF: [gifsicle](http://www.lcdf.org/gifsicle/)
+- JPEG: [jpegtran](http://jpegclub.org/jpegtran/)
+- PNG: [optipng](http://optipng.sourceforge.net/)
+
+
 ## Caching
 
 ims provides a simple on-disk cache, ensuring that unnecessary encoding work
@@ -172,6 +214,7 @@ request comes in.
 ims' caching implementation is very naive at present and has no concept of
 expiration times or detection when the source image changes. It will be
 expanded to include these features in future.
+
 
 
 ## TODO
