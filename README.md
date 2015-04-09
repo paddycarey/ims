@@ -9,7 +9,6 @@ ims uses the excellent [gift](https://github.com/disintegration/gift) library
 under the hood to perform all image manipulation.
 
 
-
 ## Work in progress
 
 ims is very much a work in progress and isn't ready for production use. Please
@@ -17,177 +16,12 @@ treat it as such and file issues where appropriate. As always, pull requests or
 other offers of help are greatly appreciated.
 
 
+## Documentation
 
-## Installing and running ims
+Full documentation is available at the following pages:
 
-ims is distributed in a single os-specific binary for each target platform. To
-install ims just download the executable for your target platform and save
-somewhere on your `$PATH` (e.g. `/usr/local/bin/ims`).
-
-ims has no further dependencoes, you can run it straight away:
-
-```bash
-$ cd my_directory_full_of_images
-$ ims
-```
-
-Once running, all images within the folder should be available at
-http://localhost:5995 (e.g. http://localhost:5995/apple.png).
-
-If required, you can also pass a number of different options to ims on the
-command line:
-
-```bash
-$ ims --help
-ims.
-
-Usage:
-  ims [--storage=<src>] [--storage-credentials=<creds>] [--cache=<cch>]
-      [--address=<address>] [--log-level=<level>] [--no-optimization]
-  ims -h | --help
-  ims --version
-
-Options:
-  -h --help                      Show this screen.
-  --version                      Show version.
-  --storage=<src>                Storage backend                    [default: ./].
-  --storage-credentials=<creds>  Storage credentials file           [default: storage-credentials.json].
-  --cache=<cch>                  Cache backend                      [default: ./.cache].
-  --address=<address>            Address that ims should bind to    [default: :5995].
-  --log-level=<level>            Log level (debug/info/warn/error)  [default: info].
-  --no-optimization              Disables image optimization.
-```
-
-
-
-## Usage
-
-Assuming you have an image called `apple.png`, applying filters is simple.
-
-
-### Resizing
-
-To resize an image you can use a URL like:
-
-```
-http://localhost:5995/apple.png?resize=500,0
-```
-
-Where the first parameter is the desired width, and the second is the desired
-height. Either value can be set to `0` (not both) to maintain aspect ratio
-during resize.
-
-
-### Cropping
-
-To crop an image you can use a URL like:
-
-```
-http://localhost:5995/apple.png?crop=0,0,100,200
-```
-
-Where the first 2 parameters are the top left corner of the box to use for
-cropping, the second 2 values are the bottom corner of the box.
-
-
-### Rotation
-
-You can rotate an image by 90, 180 or 270 degrees anti-clockwise using a URL in
-the following format:
-
-```
-http://localhost:5995/apple.png?rotate=270
-```
-
-The only acceptable parameters for `rotate` are `90`, `180` and `270`.
-
-
-### Flipping
-
-You can flip an image (horizontally or vertically) like so:
-
-```
-http://localhost:5995/apple.png?fliphorizontal
-http://localhost:5995/apple.png?flipvertical
-```
-
-Any parameters passed to either `fliphorizontal` or `flipvertical` are ignored.
-
-
-### Transpose/Transverse
-
-You can transpose an image (flip horizontally and rotate 90 degrees
-counter-clockwise) and get its transverse (flipped vertically and rotated 90
-degrees counter-clockwise) like so:
-
-```
-http://localhost:5995/apple.png?transpose
-http://localhost:5995/apple.png?transverse
-```
-
-Any parameters passed to either `transpose` or `transverse` are ignored.
-
-
-### Adjust contrast
-
-The contrast of an image can be manipulated like so:
-
-```
-http://localhost:5995/apple.png?contrast=50
-```
-
-The percentage parameter must be in range (-100, 100). The percentage = 0 gives
-the original image. The percentage = -100 gives solid grey image. The
-percentage = 100 gives an overcontrasted image.
-
-
-### Adjust brightness
-
-The brightness of an image can be manipulated like so:
-
-```
-http://localhost:5995/apple.png?brightness=50
-```
-
-The percentage parameter must be in range (-100, 100). The percentage = 0 gives
-the original image. The percentage = -100 gives solid black image. The
-percentage = 100 gives solid white image.
-
-
-### Adjust saturation
-
-The saturation of an image can be manipulated like so:
-
-```
-http://localhost:5995/apple.png?saturation=50
-```
-
-The percentage parameter must be in range (-100, 500). The percentage = 0 gives
-the original image.
-
-
-### Adjust hue
-
-The hue of an image can be manipulated like so:
-
-```
-http://localhost:5995/apple.png?hue=150
-```
-
-The shift parameter is the hue angle shift, typically in range (-180, 180). The
-shift = 0 gives the original image.
-
-
-### Chaining filters
-
-Filters can be chained arbitrarily in the URL like so:
-
-```
-http://localhost:5995/apple.png?resize=500,0&crop=0,0,100,200&resize=100,100
-```
-
-Filters will be applied in the order they are specified.
-
+- [Installing and running ims](docs/install.md)
+- [Using the ims API](docs/usage.md)
 
 
 ## Optimisation
@@ -214,16 +48,6 @@ request comes in.
 ims' caching implementation is very naive at present and has no concept of
 expiration times or detection when the source image changes. It will be
 expanded to include these features in future.
-
-
-
-## TODO
-
-- Docs
-- Expose more manipulations/filters
-- Unit/integration tests
-- Release testing builds
-
 
 
 ## Copyright & License
