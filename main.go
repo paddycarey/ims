@@ -25,7 +25,6 @@ Options:
   -h --help                      Show this screen.
   --version                      Show version.
   --storage=<src>                Storage backend                    [default: ./].
-  --storage-credentials=<creds>  Storage credentials file           [default: storage-credentials.json].
   --cache=<cch>                  Cache backend                      [default: ./.cache].
   --address=<address>            Address that ims should bind to    [default: :5995].
   --log-level=<level>            Log level (debug/info/warn/error)  [default: info].
@@ -57,7 +56,7 @@ func main() {
 	exitOnError(err, "Unable to load cache backend")
 
 	// load storage backend
-	s, err := storage.LoadBackend(arguments["--storage"].(string), arguments["--storage-credentials"].(string))
+	s, err := storage.LoadBackend(arguments["--storage"].(string))
 	exitOnError(err, "Unable to load storage backend")
 
 	// run application server

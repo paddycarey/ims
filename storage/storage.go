@@ -19,7 +19,7 @@ type FileSystem interface {
 	Open(string) (File, error)
 }
 
-func LoadBackend(uri, credentials string) (FileSystem, error) {
+func LoadBackend(uri string) (FileSystem, error) {
 
 	if strings.HasPrefix(uri, "s3://") {
 		err := errors.New("s3 loader not implemented yet")
@@ -27,7 +27,7 @@ func LoadBackend(uri, credentials string) (FileSystem, error) {
 	}
 
 	if strings.HasPrefix(uri, "gcs://") {
-		return NewGCSFileSystem(uri, credentials)
+		return NewGCSFileSystem(uri)
 	}
 
 	// fall through to default filesystem loader

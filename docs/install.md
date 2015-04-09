@@ -101,11 +101,23 @@ create a service account using the Google cloud console, and ensure that the
 Google Cloud Storage API is enabled for the project.
 
 When creating the service account you should download the credentials in json
-format and store somewhere on the same system on which ims will be running.
+format and copy the values into your environment so that ims can access them.
 
-You can enable cloud storage with the following command:
+The keys have the same names as the keys in the downloaded JSON file in
+uppercase, prepended with `GCS_`. [Forego](https://github.com/ddollar/forego)
+is a nice tool for automating this process during development. You can run ims
+with cloud storage enabled like so:
 
 ```bash
-$ ims --storage=gcs://my-bucket --storage-credentials=/path/to/credentials.json
-$ ims --storage=gcs://my-bucket/my-folder --storage-credentials=./creds.json
+# set the required environment variables
+$ export GCS_PRIVATE_KEY_ID="0084nwejcgweuif7wleukcgw93"
+$ export GCS_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\ngesrvberswefserf.....\n-----END PRIVATE KEY-----\n"
+$ export GCS_CLIENT_EMAIL="123123123-xlaksxmlaksxmalskxm@developer.gserviceaccount.com"
+$ export GCS_CLIENT_ID="123123123-xlaksxmlaksxmalskxm.apps.googleusercontent.com"
+
+# run ims using the root of the GCS bucket
+$ ims --storage=gcs://my-bucket
+
+# or serve from a specific folder
+$ ims --storage=gcs://my-bucket/my-folder
 ```

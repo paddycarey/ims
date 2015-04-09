@@ -2,6 +2,7 @@ package storage
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -13,6 +14,8 @@ import (
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 	gcs "google.golang.org/api/storage/v1"
+
+	"github.com/paddycarey/ims/config"
 )
 
 type GCSFileSystem struct {
@@ -22,9 +25,23 @@ type GCSFileSystem struct {
 	client  *http.Client
 }
 
-func NewGCSFileSystem(uri, credentials string) (*GCSFileSystem, error) {
+func NewGCSFileSystem(uri string) (*GCSFileSystem, error) {
 
-	data, err := ioutil.ReadFile(credentials)
+	jsonStruct := &struct {
+		PrivateKeyId string `json:"private_key_id"`
+		PrivateKey   string `json:"private_key"`
+		ClientEmail  string `json:"client_email"`
+		ClientId     string `json:"client_id"`
+		Type         string `json:"type"`
+	}{
+		PrivateKeyId: config.GetConfigFromEnv("GCS_PRIVATE_KEY_ID", true),
+		PrivateKey:   config.GetConfigFromEnv("GCS_PRIVATE_KEY", true),
+		ClientEmail:  config.GetConfigFromEnv("GCS_CLIENT_EMAIL", true),
+		ClientId:     config.GetConfigFromEnv("GCS_CLIENT_ID", true),
+		Type:         "service_account",
+	}
+
+	data, err := json.Marshal(jsonStruct)
 	if err != nil {
 		return nil, err
 	}
