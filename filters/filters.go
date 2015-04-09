@@ -1,7 +1,6 @@
 package filters
 
 import (
-	"fmt"
 	"image"
 	"strconv"
 
@@ -9,37 +8,6 @@ import (
 )
 
 type Filter func(*gift.GIFT, []string) bool
-
-// GetFilter returns an appropriate Filter function for a given string.
-func GetFilter(name string) (Filter, error) {
-
-	switch name {
-	case "brightness":
-		return Brightness, nil
-	case "contrast":
-		return Contrast, nil
-	case "crop":
-		return Crop, nil
-	case "fliphorizontal":
-		return FlipHorizontal, nil
-	case "flipvertical":
-		return FlipVertical, nil
-	case "hue":
-		return Hue, nil
-	case "resize":
-		return Resize, nil
-	case "rotate":
-		return Rotate, nil
-	case "saturation":
-		return Saturation, nil
-	case "transpose":
-		return Transpose, nil
-	case "transverse":
-		return Transverse, nil
-	}
-
-	return nil, fmt.Errorf("Matching filter not found: %s", name)
-}
 
 // Brightness creates a filter that changes the brightness of an image. The
 // first (and only) parameter (percentage) must be in range (-100, 100). The

@@ -1,6 +1,7 @@
 package filters
 
 import (
+	"fmt"
 	"net/url"
 	"strings"
 
@@ -61,6 +62,37 @@ func (qs *QueryString) Values() ([]*FilterArgs, error) {
 		values = append(values, NewFilterArgs(key, value))
 	}
 	return values, err
+}
+
+// GetFilter returns an appropriate Filter function for a given string.
+func GetFilter(name string) (Filter, error) {
+
+	switch name {
+	case "brightness":
+		return Brightness, nil
+	case "contrast":
+		return Contrast, nil
+	case "crop":
+		return Crop, nil
+	case "fliphorizontal":
+		return FlipHorizontal, nil
+	case "flipvertical":
+		return FlipVertical, nil
+	case "hue":
+		return Hue, nil
+	case "resize":
+		return Resize, nil
+	case "rotate":
+		return Rotate, nil
+	case "saturation":
+		return Saturation, nil
+	case "transpose":
+		return Transpose, nil
+	case "transverse":
+		return Transverse, nil
+	}
+
+	return nil, fmt.Errorf("Matching filter not found: %s", name)
 }
 
 // ProcessImage loads a file from storage, decodes it as an image, parses the
