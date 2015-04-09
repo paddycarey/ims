@@ -17,6 +17,7 @@ import (
 
 type GCSFileSystem struct {
 	bucket  string
+	dir     string
 	service *gcs.Service
 	client  *http.Client
 }
@@ -39,12 +40,12 @@ func NewGCSFileSystem(uri, credentials string) (*GCSFileSystem, error) {
 		return nil, err
 	}
 
-	bucket, err := parseBucketFromURI(uri)
+	bucket, dir, err := parseURI(uri)
 	if err != nil {
 		return nil, err
 	}
 
-	gcss := &GCSFileSystem{bucket, service, oauth2Client}
+	gcss := &GCSFileSystem{bucket, dir, service, oauth2Client}
 	return gcss, nil
 }
 
@@ -55,15 +56,15 @@ func (g *GCSFileSystem) Open(name string) (File, error) {
 		"file":   name,
 	}).Info("Fetching metadata from GCS")
 
-	name = strings.TrimLeft(name, "/")
-	res, err := g.service.Objects.Get(g.bucket, name).Do()
+	path := strings.TrimLeft(fmt.Sprintf("%s%s", g.dir, name), "/")
+	res, err := g.service.Objects.Get(g.bucket, path).Do()
 	if err != nil {
 		return nil, err
 	}
 
 	logrus.WithField("file", name).Info("Fetching file from GCS")
 
-	u := fmt.Sprintf("https://storage.googleapis.com/%s/%s", g.bucket, name)
+	u := fmt.Sprintf("https://storage.googleapis.com/%s/%s", g.bucket, path)
 	resp, err := g.client.Get(u)
 	if err != nil {
 		return nil, err
@@ -84,11 +85,11 @@ func (g *GCSFileSystem) Open(name string) (File, error) {
 	return gcsf, nil
 }
 
-func parseBucketFromURI(uri string) (string, error) {
+func parseURI(uri string) (string, string, error) {
 	u, err := url.Parse(uri)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
-	return u.Host, nil
+	return u.Host, strings.TrimRight(u.Path, "/"), nil
 }

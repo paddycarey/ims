@@ -59,6 +59,9 @@ func (s *Server) serveError(rw http.ResponseWriter, r *http.Request, err error) 
 	if strings.Contains(err.Error(), "no such file or directory") {
 		rw.WriteHeader(http.StatusNotFound)
 		status = "404 Not Found"
+	} else if strings.Contains(err.Error(), "404") {
+		rw.WriteHeader(http.StatusNotFound)
+		status = "404 Not Found"
 	} else {
 		rw.WriteHeader(http.StatusInternalServerError)
 		status = "500 Internal Server Error"
