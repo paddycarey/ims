@@ -13,8 +13,8 @@ cp -r /src /go/src/github.com/paddycarey/ims
 cd /go/src/github.com/paddycarey/ims
 
 # build ims inside the container
-go get
-go build -o /bin/ims
+go get github.com/paddycarey/ims/cmd/ims
+go build -o /bin/ims cmd/ims/ims.go
 
 # remove build-only dependencies and clean up build artifacts
 apk del go git wget

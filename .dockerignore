@@ -1,7 +1,7 @@
 .cache
 .env
-examples/
 testimages/
-ims
-ims-darwin
+/ims
+/ims-darwin
+/ims-windows
 urls.txt
