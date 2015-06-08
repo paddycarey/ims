@@ -10,7 +10,7 @@ import (
 
 	gocache "github.com/pmylund/go-cache"
 
-	"github.com/paddycarey/ims/storage"
+	"github.com/paddycarey/ims/pkg/storage"
 )
 
 type InMemoryCache struct {

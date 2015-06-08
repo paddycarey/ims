@@ -7,10 +7,10 @@ import (
 	"github.com/codegangsta/negroni"
 	"github.com/meatballhat/negroni-logrus"
 
-	"github.com/paddycarey/ims/cache"
-	"github.com/paddycarey/ims/config"
-	"github.com/paddycarey/ims/server"
-	"github.com/paddycarey/ims/storage"
+	"github.com/paddycarey/ims/pkg/cache"
+	"github.com/paddycarey/ims/pkg/config"
+	"github.com/paddycarey/ims/pkg/server"
+	"github.com/paddycarey/ims/pkg/storage"
 )
 
 // exitOnError checks that an error is not nil. If the passed value is an

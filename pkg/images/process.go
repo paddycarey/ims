@@ -7,8 +7,8 @@ import (
 
 	"github.com/Sirupsen/logrus"
 
-	"github.com/paddycarey/ims/filters"
-	"github.com/paddycarey/ims/storage"
+	"github.com/paddycarey/ims/pkg/filters"
+	"github.com/paddycarey/ims/pkg/storage"
 )
 
 func Process(f storage.File, u *url.URL, noOpts bool) (storage.File, error) {

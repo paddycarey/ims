@@ -6,9 +6,9 @@ import (
 
 	"github.com/Sirupsen/logrus"
 
-	"github.com/paddycarey/ims/cache"
-	"github.com/paddycarey/ims/images"
-	"github.com/paddycarey/ims/storage"
+	"github.com/paddycarey/ims/pkg/cache"
+	"github.com/paddycarey/ims/pkg/images"
+	"github.com/paddycarey/ims/pkg/storage"
 )
 
 type Server struct {

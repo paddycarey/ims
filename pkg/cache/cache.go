@@ -3,7 +3,7 @@ package cache
 import (
 	"net/http"
 
-	"github.com/paddycarey/ims/storage"
+	"github.com/paddycarey/ims/pkg/storage"
 )
 
 type CacheBackend interface {

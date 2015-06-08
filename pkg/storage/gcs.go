@@ -15,7 +15,7 @@ import (
 	"golang.org/x/oauth2/google"
 	gcs "google.golang.org/api/storage/v1"
 
-	"github.com/paddycarey/ims/config"
+	"github.com/paddycarey/ims/pkg/config"
 )
 
 type GCSFileSystem struct {

@@ -7,7 +7,7 @@ import (
 	"image/jpeg"
 	"image/png"
 
-	"github.com/paddycarey/ims/storage"
+	"github.com/paddycarey/ims/pkg/storage"
 )
 
 // DecodeImage reads a file from storage and attempts to decode it as an

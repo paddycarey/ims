@@ -9,7 +9,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/paddycarey/ims/storage"
+	"github.com/paddycarey/ims/pkg/storage"
 )
 
 type LocalFileSystemCache struct {

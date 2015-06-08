@@ -11,7 +11,7 @@ import (
 
 	"github.com/Sirupsen/logrus"
 
-	"github.com/paddycarey/ims/storage"
+	"github.com/paddycarey/ims/pkg/storage"
 )
 
 func Optimize(f storage.File) (storage.File, error) {
