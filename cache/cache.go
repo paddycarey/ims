@@ -13,6 +13,9 @@ type CacheBackend interface {
 }
 
 func LoadBackend(uri string) (CacheBackend, error) {
+	if uri == "::memory" {
+		return NewInMemoryCache()
+	}
 	// fall through to default filesystem loader
 	return NewLocalFileSystemCache(uri)
 }
