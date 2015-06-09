@@ -19,7 +19,7 @@ type InMemoryCache struct {
 
 func NewInMemoryCache() (*InMemoryCache, error) {
 	return &InMemoryCache{
-		c: gocache.New(15*time.Minute, 30*time.Second),
+		c: gocache.New(60*time.Minute, 30*time.Second),
 	}, nil
 }
 
