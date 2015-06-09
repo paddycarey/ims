@@ -35,7 +35,7 @@ func LoadBackend(uri string) (FileSystem, error) {
 }
 
 func getMimeTypeFromFilename(name string) string {
-	ext := filepath.Ext(name)
+	ext := strings.ToLower(filepath.Ext(name))
 	switch ext {
 	case ".gif":
 		return "image/gif"
