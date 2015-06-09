@@ -1,0 +1,13 @@
+machine:
+  services:
+    - docker
+
+dependencies:
+  override:
+    - pip install -r tests/requirements.txt
+    - docker build -t ims .
+
+test:
+  override:
+    - docker run -d -p 5995:5995 -e GCS_PRIVATE_KEY_ID=$GCS_PRIVATE_KEY_ID -e GCS_PRIVATE_KEY=$GCS_PRIVATE_KEY -e GCS_CLIENT_EMAIL=$GCS_CLIENT_EMAIL -e GCS_CLIENT_ID=$GCS_CLIENT_ID ims --log-level=debug --cache="::memory" --storage="gcs://ims-test"; sleep 10
+    - python tests/integration.py
