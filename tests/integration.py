@@ -76,8 +76,11 @@ def run_tests():
     """
     _url_generator = _generate_urls("http://localhost:5995", 100)
     _req_generator = (grequests.get(url) for url in _url_generator)
+    x = 1
     for response in grequests.imap(_req_generator, size=5):
         _check_response(response)
+        print "{0}: Success: {1}".format(str(x).zfill(4), response.url)
+        x += 1
 
 
 if __name__ == '__main__':
