@@ -1,6 +1,8 @@
 ims
 ===
 
+[![Circle CI](https://circleci.com/gh/paddycarey/ims.svg?style=svg)](https://circleci.com/gh/paddycarey/ims)
+
 ims is a standalone image manipulation, optimisation and serving service
 written in Go. ims provides on-the-fly resizing, cropping, rotation etc. (See
 full docs for an explanation of all available filters).
