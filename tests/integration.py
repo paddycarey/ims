@@ -79,7 +79,7 @@ def run_tests():
     x = 1
     for response in grequests.imap(_req_generator, size=5):
         _check_response(response)
-        print "{0}: Success: {1}".format(str(x).zfill(4), response.url)
+        print "{0}: Took ({1:7.3f}s) {2}".format(str(x).zfill(4), response.elapsed.total_seconds(), response.url)
         x += 1
 
 

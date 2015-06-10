@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
+	gocache "github.com/pmylund/go-cache"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 	gcs "google.golang.org/api/storage/v1"
@@ -18,11 +19,17 @@ import (
 	"github.com/paddycarey/ims/pkg/config"
 )
 
+type cachedGCSFile struct {
+	b  []byte
+	ts time.Time
+}
+
 type GCSFileSystem struct {
 	bucket  string
 	dir     string
 	service *gcs.Service
 	client  *http.Client
+	cache   *gocache.Cache
 }
 
 func NewGCSFileSystem(uri string) (*GCSFileSystem, error) {
@@ -62,18 +69,27 @@ func NewGCSFileSystem(uri string) (*GCSFileSystem, error) {
 		return nil, err
 	}
 
-	gcss := &GCSFileSystem{bucket, dir, service, oauth2Client}
+	cache := gocache.New(5*time.Minute, 30*time.Second)
+	gcss := &GCSFileSystem{bucket, dir, service, oauth2Client, cache}
 	return gcss, nil
 }
 
 func (g *GCSFileSystem) Open(name string) (File, error) {
+
+	path := strings.TrimLeft(fmt.Sprintf("%s%s", g.dir, name), "/")
+	u := fmt.Sprintf("https://storage.googleapis.com/%s/%s", g.bucket, path)
+
+	file, found := g.cache.Get(u)
+	if found {
+		cgf := file.(cachedGCSFile)
+		return &InMemoryFile{bytes.NewReader(cgf.b), getMimeTypeFromFilename(name), cgf.ts}, nil
+	}
 
 	logrus.WithFields(logrus.Fields{
 		"bucket": g.bucket,
 		"file":   name,
 	}).Info("Fetching metadata from GCS")
 
-	path := strings.TrimLeft(fmt.Sprintf("%s%s", g.dir, name), "/")
 	res, err := g.service.Objects.Get(g.bucket, path).Do()
 	if err != nil {
 		return nil, err
@@ -81,7 +97,6 @@ func (g *GCSFileSystem) Open(name string) (File, error) {
 
 	logrus.WithField("file", name).Info("Fetching file from GCS")
 
-	u := fmt.Sprintf("https://storage.googleapis.com/%s/%s", g.bucket, path)
 	resp, err := g.client.Get(u)
 	if err != nil {
 		return nil, err
@@ -98,6 +113,9 @@ func (g *GCSFileSystem) Open(name string) (File, error) {
 		return nil, err
 	}
 
+	if len(b) > 0 {
+		g.cache.Set(u, cachedGCSFile{b, ts}, gocache.DefaultExpiration)
+	}
 	gcsf := &InMemoryFile{bytes.NewReader(b), getMimeTypeFromFilename(name), ts}
 	return gcsf, nil
 }
