@@ -7,7 +7,6 @@ import (
 	"github.com/codegangsta/negroni"
 	"github.com/meatballhat/negroni-logrus"
 
-	"github.com/paddycarey/ims/pkg/cache"
 	"github.com/paddycarey/ims/pkg/config"
 	"github.com/paddycarey/ims/pkg/server"
 	"github.com/paddycarey/ims/pkg/storage"
@@ -34,10 +33,6 @@ func main() {
 	exitOnError(err, "Unable to initialise logger")
 	logrus.SetLevel(logLevel)
 
-	// load cache backend
-	c, err := cache.LoadBackend(args.Cache)
-	exitOnError(err, "Unable to load cache backend")
-
 	// load storage backend
 	s, err := storage.LoadBackend(args.Storage)
 	exitOnError(err, "Unable to load storage backend")
@@ -46,6 +41,6 @@ func main() {
 	n := negroni.New()
 	n.Use(negronilogrus.NewMiddleware())
 	n.Use(negroni.NewRecovery())
-	n.UseHandler(&server.Server{Cache: c, Storage: s, NoOpts: args.NoOptimization})
+	n.UseHandler(&server.Server{Cache: server.NewInMemoryCache(), Storage: s, NoOpts: args.NoOptimization})
 	n.Run(args.Address)
 }

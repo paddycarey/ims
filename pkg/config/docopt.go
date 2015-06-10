@@ -16,14 +16,12 @@ Options:
   -h --help                      Show this screen.
   --version                      Show version.
   --storage=<src>                Storage backend                    [default: ./].
-  --cache=<cch>                  Cache backend                      [default: ./.cache].
   --address=<address>            Address that ims should bind to    [default: :5995].
   --log-level=<level>            Log level (debug/info/warn/error)  [default: info].
   --no-optimization              Disables image optimization.`
 
 type Config struct {
 	Storage        string
-	Cache          string
 	Address        string
 	LogLevel       string
 	NoOptimization bool
@@ -34,7 +32,6 @@ func ParseCLIConfig() *Config {
 	arguments, _ := docopt.Parse(usage, nil, true, "ims 0.1", false)
 	return &Config{
 		Storage:        arguments["--storage"].(string),
-		Cache:          arguments["--cache"].(string),
 		Address:        arguments["--address"].(string),
 		LogLevel:       arguments["--log-level"].(string),
 		NoOptimization: arguments["--no-optimization"].(bool),

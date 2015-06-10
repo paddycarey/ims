@@ -1,4 +1,4 @@
-package cache
+package server
 
 import (
 	"crypto/md5"
@@ -17,10 +17,10 @@ type InMemoryCache struct {
 	c *gocache.Cache
 }
 
-func NewInMemoryCache() (*InMemoryCache, error) {
+func NewInMemoryCache() *InMemoryCache {
 	return &InMemoryCache{
-		c: gocache.New(60*time.Minute, 30*time.Second),
-	}, nil
+		c: gocache.New(10*time.Minute, 30*time.Second),
+	}
 }
 
 // GenerateKey concatenates the path and query string of the URL provided and

@@ -6,13 +6,12 @@ import (
 
 	"github.com/Sirupsen/logrus"
 
-	"github.com/paddycarey/ims/pkg/cache"
 	"github.com/paddycarey/ims/pkg/images"
 	"github.com/paddycarey/ims/pkg/storage"
 )
 
 type Server struct {
-	Cache   cache.CacheBackend
+	Cache   *InMemoryCache
 	Storage storage.FileSystem
 	// disable optimizations
 	NoOpts bool
